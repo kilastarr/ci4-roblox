@@ -26,12 +26,35 @@ class Roblox extends BaseController
 
     public function store()
     {
+        $nama   = $this->request->getPost('nama_game');
+        $genre  = $this->request->getPost('genre');
+        $dev    = $this->request->getPost('developer');
+        
+        // Ambil input baik dinamai 'pemain_aktif' maupun 'active_players'
+        $pemain = $this->request->getPost('pemain_aktif') ?? $this->request->getPost('active_players') ?? 0;
+
+        // Validasi Nama Game
+        if (empty($nama)) {
+            if ($this->request->isAJAX()) {
+                return $this->response->setJSON(['status' => 'error', 'message' => 'Nama game tidak boleh kosong!']);
+            }
+            return redirect()->back()->withInput();
+        }
+
+        // Simpan ke Database MySQL
         $this->robloxModel->save([
-            'nama_game'      => $this->request->getPost('nama_game'),
-            'genre'          => $this->request->getPost('genre'),
-            'developer'      => $this->request->getPost('developer'),
-            'active_players' => $this->request->getPost('active_players')
+            'nama_game'      => $nama,
+            'genre'          => $genre,
+            'developer'      => $dev,
+            'active_players' => (int)$pemain
         ]);
+
+        if ($this->request->isAJAX()) {
+            return $this->response->setJSON([
+                'status'  => 'success', 
+                'message' => "Sukses: Data game '{$nama}' berhasil disimpan ke Database!"
+            ]);
+        }
 
         return redirect()->to('/roblox');
     }
@@ -44,11 +67,13 @@ class Roblox extends BaseController
 
     public function update($id)
     {
+        $pemain = $this->request->getPost('pemain_aktif') ?? $this->request->getPost('active_players') ?? 0;
+
         $this->robloxModel->update($id, [
             'nama_game'      => $this->request->getPost('nama_game'),
             'genre'          => $this->request->getPost('genre'),
             'developer'      => $this->request->getPost('developer'),
-            'active_players' => $this->request->getPost('active_players')
+            'active_players' => (int)$pemain
         ]);
 
         return redirect()->to('/roblox');

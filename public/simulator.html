@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulator Pengujian RPL - Manajemen Roblox CI4</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            background-color: #f4f6f8;
+            color: #333;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .header h1 {
+            font-size: 24px;
+            color: #0d6efd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .header p {
+            color: #6c757d;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        .container {
+            display: flex;
+            gap: 20px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        .card {
+            flex: 1;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        /* Black Box Styling */
+        .black-box {
+            background-color: #212529;
+            color: #ecf0f1;
+        }
+        .black-box h2 {
+            font-size: 18px;
+            color: #0d6efd;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .black-box p {
+            font-size: 13px;
+            color: #adb5bd;
+            margin-bottom: 15px;
+        }
+        .form-group {
+            margin-bottom: 10px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            color: #ced4da;
+            margin-bottom: 3px;
+        }
+        .black-box input {
+            width: 100%;
+            padding: 8px 10px;
+            border-radius: 5px;
+            border: 1px solid #495057;
+            background-color: #343a40;
+            color: #fff;
+            font-size: 13px;
+            outline: none;
+        }
+        .black-box button {
+            width: 100%;
+            background-color: #0d6efd;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-top: 10px;
+        }
+        .black-box button:hover {
+            background-color: #0b5ed7;
+        }
+        .output-box {
+            margin-top: 15px;
+            background-color: #1a1e21;
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid #343a40;
+        }
+        .output-box h4 {
+            font-size: 12px;
+            color: #adb5bd;
+            margin-bottom: 6px;
+        }
+        .output-text {
+            font-size: 12px;
+            font-weight: 600;
+            padding: 8px 10px;
+            border-radius: 4px;
+        }
+        .output-success {
+            color: #2ecc71;
+            background-color: rgba(46, 204, 113, 0.1);
+        }
+        .output-error {
+            color: #e74c3c;
+            background-color: rgba(231, 76, 60, 0.1);
+        }
+
+        /* White Box Styling */
+        .white-box {
+            background-color: #ffffff;
+            border: 1px solid #dee2e6;
+        }
+        .white-box h2 {
+            font-size: 18px;
+            color: #212529;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .white-box p {
+            font-size: 13px;
+            color: #6c757d;
+            margin-bottom: 15px;
+        }
+        .code-editor {
+            background-color: #1e272e;
+            color: #dcdde1;
+            padding: 12px;
+            border-radius: 6px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 11px;
+            line-height: 1.5;
+            margin-bottom: 15px;
+            overflow-x: auto;
+        }
+        .code-line {
+            padding: 2px 6px;
+            border-radius: 3px;
+            transition: all 0.3s;
+        }
+        .highlight {
+            background-color: #f1c40f;
+            color: #1e272e;
+            font-weight: bold;
+        }
+        .path-info {
+            background-color: #eef7fa;
+            border-left: 4px solid #0d6efd;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .path-info h4 {
+            font-size: 12px;
+            color: #0d6efd;
+            margin-bottom: 4px;
+        }
+        .path-info p {
+            font-size: 12px;
+            color: #dc3545;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>🎮 Simulator Pengujian RPL - Daftar Game Roblox Popular</h1>
+        <p>Mendemonstrasikan perbedaan Black Box (Form UI) dan White Box (Logika Controller CI4)</p>
+    </div>
+
+    <div class="container">
+        <!-- BLACK BOX VIEW -->
+        <div class="card black-box">
+            <h2>📦 Black Box View (Form Input UI)</h2>
+            <p>Pengguna menginputkan data game baru pada aplikasi CI4:</p>
+            
+            <div class="form-group">
+                <label>Nama Game:</label>
+                <input type="text" id="namaGame" placeholder="Contoh: BLOXBURG">
+            </div>
+            <div class="form-group">
+                <label>Genre:</label>
+                <input type="text" id="genre" placeholder="Contoh: Roleplay">
+            </div>
+            <div class="form-group">
+                <label>Developer:</label>
+                <input type="text" id="developer" placeholder="Contoh: Bloxburg Development">
+            </div>
+            <div class="form-group">
+                <label>Pemain Aktif (Angka):</label>
+                <input type="number" id="pemainAktif" placeholder="Contoh: 11000">
+            </div>
+
+            <button onclick="ujiTambahGame()">+ Tambah Game Baru</button>
+
+            <div class="output-box">
+                <h4>Output Sistem (Respon UI):</h4>
+                <div id="uiOutput" class="output-text output-success">
+                    Masukkan data game lalu klik tombol di atas...
+                </div>
+            </div>
+        </div>
+
+        <!-- WHITE BOX VIEW -->
+        <div class="card white-box">
+            <h2>⚙️ White Box View (Roblox Controller Logic)</h2>
+            <p>Transparansi Kode: Jalur logika (<i>Independent Path</i>) yang dieksekusi oleh Controller:</p>
+
+            <div class="code-editor">
+<div class="code-line" id="l1">public function store() {</div>
+<div class="code-line" id="l2">  $nama = $this->request->getPost('nama_game');</div>
+<div class="code-line" id="l3">  $pemain = $this->request->getPost('pemain_aktif');</div>
+<div class="code-line" id="l4">  if (empty($nama)) {</div>
+<div class="code-line" id="l5">    return "Error: Nama game tidak boleh kosong!";</div>
+<div class="code-line" id="l6">  } else if ($pemain < 0) {</div>
+<div class="code-line" id="l7">    return "Error: Jumlah pemain aktif tidak valid!";</div>
+<div class="code-line" id="l8">  } else if ($pemain > 1000000) {</div>
+<div class="code-line" id="l9">    return "Error: Angka pemain aktif melebihi batas rasional!";</div>
+<div class="code-line" id="l10">  } else {</div>
+<div class="code-line" id="l11">    $this->robloxModel->save([...]);</div>
+<div class="code-line" id="l12">    return "Sukses: Data game Roblox berhasil disimpan!";</div>
+<div class="code-line" id="l13">  }</div>
+<div class="code-line" id="l14">}</div>
+            </div>
+
+            <div class="path-info">
+                <h4>Jalur (Path) yang Dilalui Logika:</h4>
+                <p id="pathText">Belum ada eksekusi data.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function resetHighlight() {
+            for (let i = 1; i <= 14; i++) {
+                document.getElementById('l' + i).classList.remove('highlight');
+            }
+        }
+
+       async function ujiTambahGame() {
+    resetHighlight();
+
+    const nama = document.getElementById('namaGame').value.trim();
+    const genre = document.getElementById('genre').value.trim();
+    const dev = document.getElementById('developer').value.trim();
+    const pemainInput = document.getElementById('pemainAktif').value.trim();
+    
+    const uiOutput = document.getElementById('uiOutput');
+    const pathText = document.getElementById('pathText');
+
+    if (nama === "") {
+        document.getElementById('l4').classList.add('highlight');
+        document.getElementById('l5').classList.add('highlight');
+
+        uiOutput.className = "output-text output-error";
+        uiOutput.textContent = "❌ Error: Nama game tidak boleh kosong!";
+        pathText.textContent = "Path 1 Terpicu (Validation Error: Nama Game Kosong)";
+    } 
+    else {
+        const pemain = Number(pemainInput);
+
+        if (pemainInput === "" || pemain < 0) {
+            document.getElementById('l6').classList.add('highlight');
+            document.getElementById('l7').classList.add('highlight');
+
+            uiOutput.className = "output-text output-error";
+            uiOutput.textContent = "❌ Error: Jumlah pemain aktif tidak valid!";
+            pathText.textContent = "Path 2 Terpicu (Blok else if pemain < 0)";
+        } 
+        else if (pemain > 1000000) {
+            document.getElementById('l8').classList.add('highlight');
+            document.getElementById('l9').classList.add('highlight');
+
+            uiOutput.className = "output-text output-error";
+            uiOutput.textContent = "❌ Error: Angka pemain aktif melebihi batas rasional!";
+            pathText.textContent = "Path 3 Terpicu (Blok else if pemain > 1.000.000)";
+        } 
+        else {
+            document.getElementById('l10').classList.add('highlight');
+            document.getElementById('l11').classList.add('highlight');
+            document.getElementById('l12').classList.add('highlight');
+
+            const formData = new FormData();
+            formData.append('nama_game', nama);
+            formData.append('genre', genre);
+            formData.append('developer', dev);
+            formData.append('pemain_aktif', pemain);
+
+            try {
+                const response = await fetch('/F5212520057_NABHITA%20AKHILLA_RPL/ci4-roblox/public/roblox/store', {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: formData
+                });
+                
+                const result = await response.json();
+
+                if (result.status === 'success') {
+                    uiOutput.className = "output-text output-success";
+                    uiOutput.textContent = `✅ ${result.message}`;
+                    pathText.textContent = "Path 4 Terpicu (Berhasil dikirim & tersimpan di Database Laragon)";
+                } else {
+                    uiOutput.className = "output-text output-error";
+                    uiOutput.textContent = `❌ ${result.message}`;
+                }
+            } catch (error) {
+                uiOutput.className = "output-text output-error";
+                uiOutput.textContent = "❌ Gagal terhubung ke Server CodeIgniter 4!";
+            }
+        }
+    }
+}
+    </script>
+</body>
+</html>
