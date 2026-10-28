@@ -15,7 +15,18 @@ class Roblox extends BaseController
 
     public function index()
     {
-        $data['game'] = $this->robloxModel->findAll();
+        $keyword = $this->request->getGet('keyword');
+
+        if ($keyword) {
+            $data['game'] = $this->robloxModel
+                                 ->like('nama_game', $keyword)
+                                 ->orLike('genre', $keyword)
+                                 ->orLike('developer', $keyword)
+                                 ->findAll();
+        } else {
+            $data['game'] = $this->robloxModel->findAll();
+        }
+
         return view('roblox/index', $data);
     }
 
@@ -29,14 +40,47 @@ class Roblox extends BaseController
         $nama   = $this->request->getPost('nama_game');
         $genre  = $this->request->getPost('genre');
         $dev    = $this->request->getPost('developer');
-        
-        // Ambil input baik dinamai 'pemain_aktif' maupun 'active_players'
         $pemain = $this->request->getPost('pemain_aktif') ?? $this->request->getPost('active_players') ?? 0;
 
-        // Validasi Nama Game
+        // Validasi 1: Nama Game Wajib Ada & Diawali Huruf
         if (empty($nama)) {
             if ($this->request->isAJAX()) {
                 return $this->response->setJSON(['status' => 'error', 'message' => 'Nama game tidak boleh kosong!']);
+            }
+            return redirect()->back()->withInput();
+        } else if (!preg_match('/^[a-zA-Z]/', $nama)) {
+            if ($this->request->isAJAX()) {
+                return $this->response->setJSON(['status' => 'error', 'message' => 'Nama game harus diawali dengan huruf!']);
+            }
+            return redirect()->back()->withInput();
+        }
+
+        // VALIDASI BARU: Cek Duplikasi Nama Game di Database MySQL
+        $existingGame = $this->robloxModel->where('nama_game', $nama)->first();
+        if ($existingGame) {
+            if ($this->request->isAJAX()) {
+                return $this->response->setJSON(['status' => 'error', 'message' => "Nama game '{$nama}' sudah ada di database!"]);
+            }
+            return redirect()->back()->withInput()->with('error', "Nama game '{$nama}' sudah ada di database!");
+        }
+
+        // Validasi 2: Genre Wajib Ada & Hanya Boleh Huruf/Spasi
+        if (empty($genre) || !preg_match('/^[a-zA-Z\s]+$/', $genre)) {
+            if ($this->request->isAJAX()) {
+                return $this->response->setJSON(['status' => 'error', 'message' => 'Genre hanya boleh berisi huruf!']);
+            }
+            return redirect()->back()->withInput();
+        }
+
+        // Validasi 3: Developer Wajib Ada & Diawali Huruf
+        if (empty($dev)) {
+            if ($this->request->isAJAX()) {
+                return $this->response->setJSON(['status' => 'error', 'message' => 'Developer tidak boleh kosong!']);
+            }
+            return redirect()->back()->withInput();
+        } else if (!preg_match('/^[a-zA-Z]/', $dev)) {
+            if ($this->request->isAJAX()) {
+                return $this->response->setJSON(['status' => 'error', 'message' => 'Nama developer harus diawali dengan huruf!']);
             }
             return redirect()->back()->withInput();
         }
